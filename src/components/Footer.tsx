@@ -2,6 +2,8 @@
 
 import AnimatedSection from "./AnimatedSection";
 import { getWhatsAppUrl, WA_MESSAGES } from "@/lib/whatsapp";
+import { useContent } from "@/contexts/ContentContext";
+import EditableText from "./admin/EditableText";
 
 const footerLinks = {
   Layanan: [
@@ -15,6 +17,9 @@ const footerLinks = {
 };
 
 export default function Footer() {
+  const { get } = useContent();
+  const waNumber = get("wa.number", "6281328758098");
+
   return (
     <footer className="bg-foreground pt-20 pb-8">
       <div className="mx-auto max-w-7xl px-6 lg:px-12">
@@ -28,14 +33,17 @@ export default function Footer() {
                   Architecture
                 </span>
               </div>
-              <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/40">
-                Merancang ruang inovatif untuk fasilitas peternakan dan hunian
-                modern. Di mana fungsi bertemu estetika.
-              </p>
+              <EditableText
+                contentKey="footer.description"
+                defaultValue="Merancang ruang inovatif untuk fasilitas peternakan dan hunian modern. Di mana fungsi bertemu estetika."
+                as="p"
+                className="mt-4 max-w-xs text-sm leading-relaxed text-white/40"
+                multiline
+              />
               {/* Social Links */}
               <div className="mt-6 flex gap-4">
                 <a
-                  href={getWhatsAppUrl(WA_MESSAGES.general)}
+                  href={getWhatsAppUrl(WA_MESSAGES.general, waNumber)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 transition-all hover:border-[#25D366] hover:bg-[#25D366]/10"

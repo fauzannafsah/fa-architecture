@@ -1,66 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import AnimatedSection from "./AnimatedSection";
-
-const projects = [
-  {
-    title: "Peternakan Sapi Riverside",
-    category: "Peternakan",
-    year: "2025",
-    image:
-      "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1200&q=80",
-    size: "large",
-    tiktok: "https://www.tiktok.com/@fa.architecture/video/1",
-  },
-  {
-    title: "Rumah Modern Hillcrest",
-    category: "Perumahan",
-    year: "2024",
-    image:
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80",
-    size: "small",
-    tiktok: "https://www.tiktok.com/@fa.architecture/video/2",
-  },
-  {
-    title: "Kompleks Unggas Oakfield",
-    category: "Peternakan",
-    year: "2024",
-    image:
-      "https://images.unsplash.com/photo-1416331108676-a22ccb276e35?w=800&q=80",
-    size: "small",
-    tiktok: "https://www.tiktok.com/@fa.architecture/video/3",
-  },
-  {
-    title: "Residensi The Meadow",
-    category: "Perumahan",
-    year: "2025",
-    image:
-      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80",
-    size: "large",
-    tiktok: "https://www.tiktok.com/@fa.architecture/video/4",
-  },
-  {
-    title: "Pusat Equestrian Greenfield",
-    category: "Peternakan",
-    year: "2023",
-    image:
-      "https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?w=800&q=80",
-    size: "small",
-    tiktok: "https://www.tiktok.com/@fa.architecture/video/5",
-  },
-  {
-    title: "Peternakan Cedar Valley",
-    category: "Fungsi Campuran",
-    year: "2024",
-    image:
-      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80",
-    size: "small",
-    tiktok: "https://www.tiktok.com/@fa.architecture/video/6",
-  },
-];
+import { useContent } from "@/contexts/ContentContext";
+import { useAuth } from "@/contexts/AuthContext";
+import EditableText from "./admin/EditableText";
+import PortfolioEditModal from "./admin/PortfolioEditModal";
+import type { PortfolioProject } from "@/lib/types";
 
 export default function Portfolio() {
+  const { portfolioProjects } = useContent();
+  const { isAdmin } = useAuth();
+  const [editingProject, setEditingProject] = useState<PortfolioProject | null>(null);
+  const [addingNew, setAddingNew] = useState(false);
+
   return (
     <section id="projects" className="relative bg-warm-white py-28 lg:py-36">
       <div className="mx-auto max-w-7xl px-6 lg:px-12">
@@ -68,14 +22,28 @@ export default function Portfolio() {
         <div className="mb-16 flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
           <div>
             <AnimatedSection>
-              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-terracotta">
-                Proyek Unggulan
-              </span>
+              <EditableText
+                contentKey="portfolio.label"
+                defaultValue="Proyek Unggulan"
+                className="text-xs font-semibold uppercase tracking-[0.3em] text-terracotta"
+              />
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
               <h2 className="mt-4 font-serif text-4xl leading-tight text-foreground sm:text-5xl lg:text-6xl">
-                Karya{" "}
-                <span className="italic text-terracotta">Terbaru</span> Kami
+                <EditableText
+                  contentKey="portfolio.heading"
+                  defaultValue="Karya"
+                />{" "}
+                <span className="italic text-terracotta">
+                  <EditableText
+                    contentKey="portfolio.heading_accent"
+                    defaultValue="Terbaru"
+                  />
+                </span>{" "}
+                <EditableText
+                  contentKey="portfolio.heading_suffix"
+                  defaultValue="Kami"
+                />
               </h2>
             </AnimatedSection>
           </div>
@@ -94,17 +62,36 @@ export default function Portfolio() {
 
         {/* Projects Grid - Masonry-like layout */}
         <div className="grid gap-6 md:grid-cols-2">
-          {projects.map((project, i) => (
+          {portfolioProjects.map((project, i) => (
             <AnimatedSection
-              key={project.title}
+              key={project.id || project.title}
               delay={i * 0.1}
               className={project.size === "large" ? "md:col-span-2" : ""}
             >
               <motion.div
                 whileHover="hovered"
                 className="group relative cursor-pointer overflow-hidden rounded-2xl"
-                onClick={() => window.open(project.tiktok, "_blank")}
+                onClick={() => {
+                  if (isAdmin) return; // Don't open TikTok in admin mode
+                  if (project.tiktok_url) window.open(project.tiktok_url, "_blank");
+                }}
               >
+                {/* Admin edit button */}
+                {isAdmin && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setEditingProject(project as PortfolioProject);
+                    }}
+                    className="absolute right-4 top-4 z-20 flex h-8 w-8 items-center justify-center rounded-lg bg-terracotta/90 text-white shadow-lg transition-all hover:bg-terracotta"
+                    title="Edit proyek"
+                  >
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17 17.25 9.34a2.12 2.12 0 0 0-3-3L8.34 12.42a2 2 0 0 0-.46.82l-.72 2.88a.5.5 0 0 0 .6.6l2.88-.72a2 2 0 0 0 .82-.46Z" />
+                    </svg>
+                  </button>
+                )}
+
                 {/* Image */}
                 <div
                   className={`relative overflow-hidden ${
@@ -120,7 +107,7 @@ export default function Portfolio() {
                     transition={{ duration: 0.6 }}
                     className="absolute inset-0 bg-cover bg-center"
                     style={{
-                      backgroundImage: `url('${project.image}')`,
+                      backgroundImage: `url('${project.image_url}')`,
                     }}
                   />
                   {/* Overlay */}
@@ -160,26 +147,60 @@ export default function Portfolio() {
                       className="mt-3 h-0.5 bg-terracotta"
                     />
                     {/* TikTok indicator */}
-                    <motion.div
-                      variants={{
-                        hovered: { opacity: 1, y: 0 },
-                      }}
-                      initial={{ opacity: 0, y: 8 }}
-                      transition={{ duration: 0.3, delay: 0.15 }}
-                      className="mt-4 inline-flex items-center gap-2 text-white/70"
-                    >
-                      <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.51a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.73a8.19 8.19 0 0 0 4.76 1.52v-3.4a4.85 4.85 0 0 1-1-.16z" />
-                      </svg>
-                      <span className="text-xs font-medium uppercase tracking-wider">Tonton Video</span>
-                    </motion.div>
+                    {project.tiktok_url && (
+                      <motion.div
+                        variants={{
+                          hovered: { opacity: 1, y: 0 },
+                        }}
+                        initial={{ opacity: 0, y: 8 }}
+                        transition={{ duration: 0.3, delay: 0.15 }}
+                        className="mt-4 inline-flex items-center gap-2 text-white/70"
+                      >
+                        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.51a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.73a8.19 8.19 0 0 0 4.76 1.52v-3.4a4.85 4.85 0 0 1-1-.16z" />
+                        </svg>
+                        <span className="text-xs font-medium uppercase tracking-wider">Tonton Video</span>
+                      </motion.div>
+                    )}
                   </div>
                 </div>
               </motion.div>
             </AnimatedSection>
           ))}
+
+          {/* Add new project button (admin only) */}
+          {isAdmin && (
+            <AnimatedSection delay={portfolioProjects.length * 0.1}>
+              <button
+                onClick={() => setAddingNew(true)}
+                className="flex min-h-[200px] w-full items-center justify-center rounded-2xl border-2 border-dashed border-warm-gray/30 text-warm-gray transition-colors hover:border-terracotta/50 hover:text-terracotta"
+              >
+                <div className="text-center">
+                  <svg className="mx-auto h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                  </svg>
+                  <span className="mt-2 block text-sm">Tambah Proyek</span>
+                </div>
+              </button>
+            </AnimatedSection>
+          )}
         </div>
       </div>
+
+      {/* Edit Modal */}
+      {editingProject && (
+        <PortfolioEditModal
+          project={editingProject}
+          onClose={() => setEditingProject(null)}
+        />
+      )}
+      {addingNew && (
+        <PortfolioEditModal
+          project={null}
+          isNew
+          onClose={() => setAddingNew(false)}
+        />
+      )}
     </section>
   );
 }

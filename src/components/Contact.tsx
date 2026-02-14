@@ -3,8 +3,13 @@
 import { motion } from "framer-motion";
 import AnimatedSection from "./AnimatedSection";
 import { getWhatsAppUrl, WA_MESSAGES } from "@/lib/whatsapp";
+import { useContent } from "@/contexts/ContentContext";
+import EditableText from "./admin/EditableText";
 
 export default function Contact() {
+  const { get } = useContent();
+  const waNumber = get("wa.number", "6281328758098");
+
   return (
     <section id="contact" className="relative overflow-hidden bg-background py-28 lg:py-36">
       {/* Background decoration */}
@@ -16,25 +21,40 @@ export default function Contact() {
           {/* Left - CTA Text */}
           <div>
             <AnimatedSection>
-              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-terracotta">
-                Hubungi Kami
-              </span>
+              <EditableText
+                contentKey="contact.label"
+                defaultValue="Hubungi Kami"
+                className="text-xs font-semibold uppercase tracking-[0.3em] text-terracotta"
+              />
             </AnimatedSection>
 
             <AnimatedSection delay={0.1}>
               <h2 className="mt-4 font-serif text-4xl leading-tight text-foreground sm:text-5xl lg:text-6xl">
-                Mari Bangun{" "}
-                <span className="italic text-terracotta">Sesuatu</span>{" "}
-                yang Luar Biasa
+                <EditableText
+                  contentKey="contact.heading"
+                  defaultValue="Mari Bangun"
+                />{" "}
+                <span className="italic text-terracotta">
+                  <EditableText
+                    contentKey="contact.heading_accent"
+                    defaultValue="Sesuatu"
+                  />
+                </span>{" "}
+                <EditableText
+                  contentKey="contact.heading_suffix"
+                  defaultValue="yang Luar Biasa"
+                />
               </h2>
             </AnimatedSection>
 
             <AnimatedSection delay={0.2}>
-              <p className="mt-6 text-lg leading-relaxed text-warm-gray">
-                Baik Anda merencanakan fasilitas peternakan baru, memimpikan
-                rumah sempurna, atau ingin memperbarui ruang yang ada — langsung
-                hubungi kami via WhatsApp untuk respons tercepat.
-              </p>
+              <EditableText
+                contentKey="contact.subtitle"
+                defaultValue="Baik Anda merencanakan fasilitas peternakan baru, memimpikan rumah sempurna, atau ingin memperbarui ruang yang ada — langsung hubungi kami via WhatsApp untuk respons tercepat."
+                as="p"
+                className="mt-6 text-lg leading-relaxed text-warm-gray"
+                multiline
+              />
             </AnimatedSection>
 
             {/* Contact Info */}
@@ -42,7 +62,7 @@ export default function Contact() {
               <div className="mt-12 space-y-6">
                 {/* WhatsApp - Primary */}
                 <a
-                  href={getWhatsAppUrl(WA_MESSAGES.general)}
+                  href={getWhatsAppUrl(WA_MESSAGES.general, waNumber)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group flex items-start gap-4 rounded-2xl border-2 border-[#25D366]/20 bg-[#25D366]/5 p-5 transition-all hover:border-[#25D366]/40 hover:bg-[#25D366]/10"
@@ -54,7 +74,12 @@ export default function Contact() {
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-[#25D366]">WhatsApp (Tercepat)</p>
-                    <p className="mt-1 text-foreground">+62 812 3456 7890</p>
+                    <p className="mt-1 text-foreground">
+                      <EditableText
+                        contentKey="contact.wa_display"
+                        defaultValue="+62 813 2875 8098"
+                      />
+                    </p>
                     <p className="mt-1 text-xs text-warm-gray">Klik untuk langsung chat &rarr;</p>
                   </div>
                 </a>
@@ -67,7 +92,12 @@ export default function Contact() {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-foreground">Email</p>
-                    <p className="mt-1 text-warm-gray">hello@fa-architecture.com</p>
+                    <p className="mt-1 text-warm-gray">
+                      <EditableText
+                        contentKey="contact.email"
+                        defaultValue="hello@fa-architecture.com"
+                      />
+                    </p>
                   </div>
                 </div>
 
@@ -80,7 +110,12 @@ export default function Contact() {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-foreground">Kantor</p>
-                    <p className="mt-1 text-warm-gray">Jl. Arsitektur No. 123, Jakarta, Indonesia</p>
+                    <p className="mt-1 text-warm-gray">
+                      <EditableText
+                        contentKey="contact.address"
+                        defaultValue="Jl. Arsitektur No. 123, Jakarta, Indonesia"
+                      />
+                    </p>
                   </div>
                 </div>
               </div>
@@ -91,16 +126,22 @@ export default function Contact() {
           <AnimatedSection delay={0.2} direction="right">
             <motion.div className="rounded-2xl border border-light-border bg-white p-8 shadow-sm lg:p-10">
               <h3 className="font-serif text-2xl text-foreground">
-                Mulai Konsultasi Cepat
+                <EditableText
+                  contentKey="contact.consult_heading"
+                  defaultValue="Mulai Konsultasi Cepat"
+                />
               </h3>
-              <p className="mt-2 text-sm text-warm-gray">
-                Pilih jenis proyek Anda, langsung terhubung via WhatsApp. Tidak perlu isi formulir panjang!
-              </p>
+              <EditableText
+                contentKey="contact.consult_subtitle"
+                defaultValue="Pilih jenis proyek Anda, langsung terhubung via WhatsApp. Tidak perlu isi formulir panjang!"
+                as="p"
+                className="mt-2 text-sm text-warm-gray"
+              />
 
               <div className="mt-8 space-y-4">
                 {/* Livestock */}
                 <a
-                  href={getWhatsAppUrl(WA_MESSAGES.livestock)}
+                  href={getWhatsAppUrl(WA_MESSAGES.livestock, waNumber)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group flex items-center gap-4 rounded-xl border border-light-border p-4 transition-all hover:border-[#25D366]/30 hover:bg-[#25D366]/5 hover:shadow-sm"
@@ -119,7 +160,7 @@ export default function Contact() {
 
                 {/* Housing */}
                 <a
-                  href={getWhatsAppUrl(WA_MESSAGES.housing)}
+                  href={getWhatsAppUrl(WA_MESSAGES.housing, waNumber)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group flex items-center gap-4 rounded-xl border border-light-border p-4 transition-all hover:border-[#25D366]/30 hover:bg-[#25D366]/5 hover:shadow-sm"
@@ -138,7 +179,7 @@ export default function Contact() {
 
                 {/* Planning */}
                 <a
-                  href={getWhatsAppUrl(WA_MESSAGES.planning)}
+                  href={getWhatsAppUrl(WA_MESSAGES.planning, waNumber)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group flex items-center gap-4 rounded-xl border border-light-border p-4 transition-all hover:border-[#25D366]/30 hover:bg-[#25D366]/5 hover:shadow-sm"
@@ -157,7 +198,7 @@ export default function Contact() {
 
                 {/* Renovation */}
                 <a
-                  href={getWhatsAppUrl(WA_MESSAGES.renovation)}
+                  href={getWhatsAppUrl(WA_MESSAGES.renovation, waNumber)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group flex items-center gap-4 rounded-xl border border-light-border p-4 transition-all hover:border-[#25D366]/30 hover:bg-[#25D366]/5 hover:shadow-sm"
@@ -177,7 +218,7 @@ export default function Contact() {
 
               {/* General WhatsApp CTA */}
               <motion.a
-                href={getWhatsAppUrl(WA_MESSAGES.general)}
+                href={getWhatsAppUrl(WA_MESSAGES.general, waNumber)}
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.02 }}

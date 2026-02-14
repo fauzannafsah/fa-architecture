@@ -3,8 +3,11 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { getWhatsAppUrl, WA_MESSAGES } from "@/lib/whatsapp";
+import { useContent } from "@/contexts/ContentContext";
 
 export default function WhatsAppFloat() {
+  const { get } = useContent();
+  const waNumber = get("wa.number");
   const [visible, setVisible] = useState(false);
   const [tooltip, setTooltip] = useState(true);
 
@@ -50,7 +53,7 @@ export default function WhatsAppFloat() {
 
           {/* WhatsApp button */}
           <a
-            href={getWhatsAppUrl(WA_MESSAGES.general)}
+            href={getWhatsAppUrl(WA_MESSAGES.general, waNumber)}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Chat via WhatsApp"

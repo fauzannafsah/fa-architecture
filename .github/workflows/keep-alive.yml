@@ -1,0 +1,21 @@
+name: Keep Supabase Alive
+
+on:
+  schedule:
+    # Runs every 6 days to prevent Supabase free-tier pause (7-day inactivity limit)
+    - cron: '0 0 */6 * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping keep-alive endpoint
+        run: |
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" "${{ secrets.SITE_URL }}/api/keep-alive")
+          echo "Response code: $RESPONSE"
+          if [ "$RESPONSE" != "200" ]; then
+            echo "Keep-alive ping failed with status $RESPONSE"
+            exit 1
+          fi
+          echo "Keep-alive ping successful"

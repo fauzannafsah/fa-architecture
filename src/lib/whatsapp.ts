@@ -1,5 +1,6 @@
-// WhatsApp configuration — change the number to your actual business number
-export const WA_NUMBER = "6281328758098";
+// WhatsApp configuration
+// Default number — can be overridden by Supabase content (key: "wa.number")
+export const WA_NUMBER_DEFAULT = "6281328758098";
 
 export const WA_MESSAGES = {
   general: "Halo FA Architecture! Saya tertarik untuk konsultasi tentang proyek arsitektur.",
@@ -10,6 +11,10 @@ export const WA_MESSAGES = {
   renovation: "Halo FA Architecture! Saya tertarik dengan layanan renovasi & restorasi.",
 };
 
-export function getWhatsAppUrl(message: string = WA_MESSAGES.general): string {
-  return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(message)}`;
+export function getWhatsAppUrl(
+  message: string = WA_MESSAGES.general,
+  number?: string
+): string {
+  const waNumber = number || WA_NUMBER_DEFAULT;
+  return `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
 }

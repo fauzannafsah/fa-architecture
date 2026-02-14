@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { getWhatsAppUrl, WA_MESSAGES } from "@/lib/whatsapp";
+import { useContent } from "@/contexts/ContentContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 const navLinks = [
   { label: "Beranda", href: "#hero" },
@@ -14,6 +16,9 @@ const navLinks = [
 ];
 
 export default function Navbar() {
+  const { get } = useContent();
+  const { isAdmin } = useAuth();
+  const waNumber = get("wa.number");
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -29,7 +34,7 @@ export default function Navbar() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.8, ease: [0.25, 0.4, 0.25, 1] }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        className={`fixed left-0 right-0 z-50 transition-all duration-500 ${isAdmin ? "top-10" : "top-0"} ${
           scrolled
             ? "bg-white/90 backdrop-blur-md shadow-sm"
             : "bg-transparent"
@@ -77,7 +82,7 @@ export default function Navbar() {
               </a>
             ))}
             <a
-              href={getWhatsAppUrl(WA_MESSAGES.general)}
+              href={getWhatsAppUrl(WA_MESSAGES.general, waNumber)}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-2.5 text-sm font-medium text-white transition-all duration-300 hover:bg-[#1fb855] hover:shadow-lg"
@@ -142,7 +147,7 @@ export default function Navbar() {
                 </motion.a>
               ))}
               <motion.a
-                href={getWhatsAppUrl(WA_MESSAGES.general)}
+                href={getWhatsAppUrl(WA_MESSAGES.general, waNumber)}
                 target="_blank"
                 rel="noopener noreferrer"
                 initial={{ opacity: 0, y: 20 }}

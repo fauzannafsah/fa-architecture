@@ -1,49 +1,22 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import AnimatedSection from "./AnimatedSection";
-import { getWhatsAppUrl, WA_MESSAGES } from "@/lib/whatsapp";
-
-const services = [
-  {
-    number: "01",
-    title: "Desain Fasilitas Peternakan",
-    description:
-      "Kandang, istal, dan struktur pertanian yang dibangun dengan tujuan khusus untuk kesejahteraan hewan optimal, ventilasi, dan efisiensi operasional.",
-    features: ["Kandang Sapi & Perah", "Kandang Unggas", "Fasilitas Kuda", "Gudang Pakan"],
-    image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80",
-    waMessage: WA_MESSAGES.livestock,
-  },
-  {
-    number: "02",
-    title: "Hunian & Perumahan",
-    description:
-      "Rumah kontemporer yang memadukan estetika modern dengan lingkungan pedesaan — berkelanjutan, hangat, dan dirancang sesuai gaya hidup Anda.",
-    features: ["Rumah Custom", "Rumah Pedesaan", "Desain Berkelanjutan", "Perencanaan Interior"],
-    image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80",
-    waMessage: WA_MESSAGES.housing,
-  },
-  {
-    number: "03",
-    title: "Perencanaan Tapak",
-    description:
-      "Perencanaan tapak menyeluruh yang mengintegrasikan operasi peternakan dengan hunian, menciptakan tata letak peternakan yang harmonis.",
-    features: ["Analisis Tapak", "Strategi Zonasi", "Integrasi Lanskap", "Infrastruktur"],
-    image: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800&q=80",
-    waMessage: WA_MESSAGES.planning,
-  },
-  {
-    number: "04",
-    title: "Renovasi & Restorasi",
-    description:
-      "Menghidupkan kembali bangunan yang sudah ada sambil mempertahankan karakternya — dari konversi kandang warisan hingga perluasan rumah modern.",
-    features: ["Konversi Kandang", "Perluasan Rumah", "Restorasi Warisan", "Modernisasi"],
-    image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80",
-    waMessage: WA_MESSAGES.renovation,
-  },
-];
+import { getWhatsAppUrl } from "@/lib/whatsapp";
+import { useContent } from "@/contexts/ContentContext";
+import { useAuth } from "@/contexts/AuthContext";
+import EditableText from "./admin/EditableText";
+import ServiceEditModal from "./admin/ServiceEditModal";
+import type { ServiceItem } from "@/lib/types";
 
 export default function Services() {
+  const { get, services } = useContent();
+  const { isAdmin } = useAuth();
+  const waNumber = get("wa.number", "6281328758098");
+  const [editingService, setEditingService] = useState<ServiceItem | null>(null);
+  const [addingNew, setAddingNew] = useState(false);
+
   return (
     <section id="services" className="relative bg-foreground py-28 lg:py-36">
       {/* Background decoration */}
@@ -54,24 +27,38 @@ export default function Services() {
         {/* Section Header */}
         <div className="mb-20 max-w-2xl">
           <AnimatedSection>
-            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-terracotta-light">
-              Layanan Kami
-            </span>
+            <EditableText
+              contentKey="services.label"
+              defaultValue="Layanan Kami"
+              className="text-xs font-semibold uppercase tracking-[0.3em] text-terracotta-light"
+            />
           </AnimatedSection>
           <AnimatedSection delay={0.1}>
             <h2 className="mt-4 font-serif text-4xl leading-tight text-white sm:text-5xl lg:text-6xl">
-              Keahlian yang{" "}
-              <span className="italic text-terracotta-light">Menjembatani</span> Dua
-              Dunia
+              <EditableText
+                contentKey="services.heading"
+                defaultValue="Keahlian yang"
+              />{" "}
+              <span className="italic text-terracotta-light">
+                <EditableText
+                  contentKey="services.heading_accent"
+                  defaultValue="Menjembatani"
+                />
+              </span>{" "}
+              <EditableText
+                contentKey="services.heading_suffix"
+                defaultValue="Dua Dunia"
+              />
             </h2>
           </AnimatedSection>
           <AnimatedSection delay={0.2}>
-            <p className="mt-6 text-lg leading-relaxed text-white/50">
-              Baik itu fasilitas peternakan berperforma tinggi maupun rumah
-              impian keluarga, pendekatan kami tetap sama — mendengarkan
-              dengan saksama, merancang dengan penuh pertimbangan, membangun
-              dengan indah.
-            </p>
+            <EditableText
+              contentKey="services.subtitle"
+              defaultValue="Baik itu fasilitas peternakan berperforma tinggi maupun rumah impian keluarga, pendekatan kami tetap sama — mendengarkan dengan saksama, merancang dengan penuh pertimbangan, membangun dengan indah."
+              as="p"
+              className="mt-6 text-lg leading-relaxed text-white/50"
+              multiline
+            />
           </AnimatedSection>
         </div>
 
@@ -79,7 +66,7 @@ export default function Services() {
         <div className="grid gap-8 md:grid-cols-2">
           {services.map((service, i) => (
             <AnimatedSection
-              key={service.number}
+              key={service.id || service.number}
               delay={i * 0.15}
               direction={i % 2 === 0 ? "left" : "right"}
             >
@@ -88,11 +75,24 @@ export default function Services() {
                 transition={{ duration: 0.4 }}
                 className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm"
               >
+                {/* Admin edit button */}
+                {isAdmin && (
+                  <button
+                    onClick={() => setEditingService(service as ServiceItem)}
+                    className="absolute right-4 top-4 z-20 flex h-8 w-8 items-center justify-center rounded-lg bg-terracotta/90 text-white shadow-lg transition-all hover:bg-terracotta"
+                    title="Edit layanan"
+                  >
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17 17.25 9.34a2.12 2.12 0 0 0-3-3L8.34 12.42a2 2 0 0 0-.46.82l-.72 2.88a.5.5 0 0 0 .6.6l2.88-.72a2 2 0 0 0 .82-.46Z" />
+                    </svg>
+                  </button>
+                )}
+
                 {/* Image */}
                 <div className="relative aspect-[16/9] overflow-hidden">
                   <div
                     className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                    style={{ backgroundImage: `url('${service.image}')` }}
+                    style={{ backgroundImage: `url('${service.image_url}')` }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-foreground via-foreground/50 to-transparent" />
                   <div className="absolute left-6 top-6">
@@ -113,7 +113,7 @@ export default function Services() {
 
                   {/* Features */}
                   <div className="mt-6 flex flex-wrap gap-2">
-                    {service.features.map((feature) => (
+                    {(service.features || []).map((feature: string) => (
                       <span
                         key={feature}
                         className="rounded-full border border-white/10 px-3 py-1 text-xs text-white/60 transition-colors group-hover:border-terracotta/30 group-hover:text-terracotta-light"
@@ -125,7 +125,10 @@ export default function Services() {
 
                   {/* Arrow link */}
                   <a
-                    href={getWhatsAppUrl(service.waMessage)}
+                    href={getWhatsAppUrl(
+                      service.wa_message || `Halo FA Architecture! Saya tertarik dengan layanan ${service.title}.`,
+                      waNumber
+                    )}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-8 inline-flex items-center gap-2 text-[#25D366] transition-colors hover:text-[#1fb855]"
@@ -145,8 +148,40 @@ export default function Services() {
               </motion.div>
             </AnimatedSection>
           ))}
+
+          {/* Add new service button (admin only) */}
+          {isAdmin && (
+            <AnimatedSection delay={services.length * 0.15}>
+              <button
+                onClick={() => setAddingNew(true)}
+                className="flex min-h-[300px] w-full items-center justify-center rounded-2xl border-2 border-dashed border-white/20 text-white/40 transition-colors hover:border-terracotta/50 hover:text-terracotta-light"
+              >
+                <div className="text-center">
+                  <svg className="mx-auto h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                  </svg>
+                  <span className="mt-2 block text-sm">Tambah Layanan</span>
+                </div>
+              </button>
+            </AnimatedSection>
+          )}
         </div>
       </div>
+
+      {/* Edit Modal */}
+      {editingService && (
+        <ServiceEditModal
+          service={editingService}
+          onClose={() => setEditingService(null)}
+        />
+      )}
+      {addingNew && (
+        <ServiceEditModal
+          service={null}
+          isNew
+          onClose={() => setAddingNew(false)}
+        />
+      )}
     </section>
   );
 }

@@ -18,7 +18,7 @@ const footerLinks = {
 
 export default function Footer() {
   const { get } = useContent();
-  const waNumber = get("wa.number", "6281328758098");
+  const waNumber = get("wa.number", "6283874979320");
 
   return (
     <footer className="bg-foreground pt-20 pb-8">

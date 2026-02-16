@@ -61,7 +61,7 @@ export const DEFAULTS: Record<string, string> = {
     "Baik Anda merencanakan fasilitas peternakan baru, memimpikan rumah sempurna, atau ingin memperbarui ruang yang ada — langsung hubungi kami via WhatsApp untuk respons tercepat.",
   "contact.email": "hello@fa-architecture.com",
   "contact.address": "Jl. Arsitektur No. 123, Jakarta, Indonesia",
-  "contact.wa_display": "+62 813 2875 8098",
+  "contact.wa_display": "+62 838 7497 9320",
   "contact.consult_heading": "Mulai Konsultasi Cepat",
   "contact.consult_subtitle":
     "Pilih jenis proyek Anda, langsung terhubung via WhatsApp. Tidak perlu isi formulir panjang!",
@@ -71,7 +71,7 @@ export const DEFAULTS: Record<string, string> = {
     "Merancang ruang inovatif untuk fasilitas peternakan dan hunian modern. Di mana fungsi bertemu estetika.",
 
   // WhatsApp
-  "wa.number": "6281328758098",
+  "wa.number": "6283874979320",
 };
 
 // Default portfolio projects

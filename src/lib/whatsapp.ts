@@ -1,6 +1,6 @@
 // WhatsApp configuration
 // Default number — can be overridden by Supabase content (key: "wa.number")
-export const WA_NUMBER_DEFAULT = "6281328758098";
+export const WA_NUMBER_DEFAULT = "6283874979320";
 
 export const WA_MESSAGES = {
   general: "Halo FA Architecture! Saya tertarik untuk konsultasi tentang proyek arsitektur.",

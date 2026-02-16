@@ -8,7 +8,7 @@ import EditableText from "./admin/EditableText";
 
 export default function Contact() {
   const { get } = useContent();
-  const waNumber = get("wa.number", "6281328758098");
+  const waNumber = get("wa.number", "6283874979320");
 
   return (
     <section id="contact" className="relative overflow-hidden bg-background py-28 lg:py-36">
@@ -77,7 +77,7 @@ export default function Contact() {
                     <p className="mt-1 text-foreground">
                       <EditableText
                         contentKey="contact.wa_display"
-                        defaultValue="+62 813 2875 8098"
+                        defaultValue="+62 838 7497 9320"
                       />
                     </p>
                     <p className="mt-1 text-xs text-warm-gray">Klik untuk langsung chat &rarr;</p>

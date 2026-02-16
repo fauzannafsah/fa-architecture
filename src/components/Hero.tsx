@@ -8,7 +8,7 @@ import EditableImage from "./admin/EditableImage";
 
 export default function Hero() {
   const { get } = useContent();
-  const waNumber = get("wa.number", "6281328758098");
+  const waNumber = get("wa.number", "6283874979320");
 
   return (
     <section

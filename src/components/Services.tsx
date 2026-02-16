@@ -13,7 +13,7 @@ import type { ServiceItem } from "@/lib/types";
 export default function Services() {
   const { get, services } = useContent();
   const { isAdmin } = useAuth();
-  const waNumber = get("wa.number", "6281328758098");
+  const waNumber = get("wa.number", "6283874979320");
   const [editingService, setEditingService] = useState<ServiceItem | null>(null);
   const [addingNew, setAddingNew] = useState(false);
 

@@ -83,9 +83,13 @@ export default function EditableText({
     setEditing(false);
   };
 
+  const isBlockTag = ["p", "div", "h1", "h2", "h3", "h4", "h5", "h6", "section", "article", "li"].includes(
+    typeof Tag === "string" ? Tag : ""
+  );
+
   return (
     <>
-      <Tag ref={triggerRef} className={`group/editable relative inline ${className}`}>
+      <Tag ref={triggerRef} className={`group/editable relative ${isBlockTag ? "" : "inline"} ${className}`}>
         {displayValue}
 
         {/* Wrench button */}

@@ -71,8 +71,10 @@ export default function EditableImage({
     setEditing(false);
   };
 
+  const positionClass = className.includes("absolute") ? "" : "relative";
+
   return (
-    <div className={`group/img ${className}`}>
+    <div className={`group/img ${positionClass} ${className}`}>
       {children}
 
       {/* Wrench overlay */}

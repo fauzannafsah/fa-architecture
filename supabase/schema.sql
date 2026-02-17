@@ -40,6 +40,17 @@ CREATE TABLE IF NOT EXISTS services (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- 4. Testimonials Table
+CREATE TABLE IF NOT EXISTS testimonials (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  image_url TEXT NOT NULL,
+  client_name TEXT DEFAULT '',
+  project_label TEXT DEFAULT '',
+  sort_order INT DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- ============================================
 -- Row Level Security (RLS)
 -- ============================================
@@ -48,6 +59,7 @@ CREATE TABLE IF NOT EXISTS services (
 ALTER TABLE site_content ENABLE ROW LEVEL SECURITY;
 ALTER TABLE portfolio_projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE services ENABLE ROW LEVEL SECURITY;
+ALTER TABLE testimonials ENABLE ROW LEVEL SECURITY;
 
 -- Public read access for all tables
 CREATE POLICY "Public read site_content" ON site_content
@@ -85,6 +97,18 @@ CREATE POLICY "Admin update services" ON services
   FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
 
 CREATE POLICY "Admin delete services" ON services
+  FOR DELETE TO authenticated USING (true);
+
+CREATE POLICY "Public read testimonials" ON testimonials
+  FOR SELECT USING (true);
+
+CREATE POLICY "Admin insert testimonials" ON testimonials
+  FOR INSERT TO authenticated WITH CHECK (true);
+
+CREATE POLICY "Admin update testimonials" ON testimonials
+  FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
+
+CREATE POLICY "Admin delete testimonials" ON testimonials
   FOR DELETE TO authenticated USING (true);
 
 -- ============================================
@@ -133,4 +157,8 @@ CREATE TRIGGER portfolio_projects_updated_at
 
 CREATE TRIGGER services_updated_at
   BEFORE UPDATE ON services
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
+CREATE TRIGGER testimonials_updated_at
+  BEFORE UPDATE ON testimonials
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();

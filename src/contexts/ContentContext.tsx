@@ -9,8 +9,8 @@ import {
   type ReactNode,
 } from "react";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
-import { DEFAULTS, DEFAULT_PORTFOLIO, DEFAULT_SERVICES } from "@/lib/defaults";
-import type { PortfolioProject, ServiceItem } from "@/lib/types";
+import { DEFAULTS, DEFAULT_PORTFOLIO, DEFAULT_SERVICES, DEFAULT_TESTIMONIALS } from "@/lib/defaults";
+import type { PortfolioProject, ServiceItem, TestimonialItem } from "@/lib/types";
 import { useAuth } from "./AuthContext";
 
 interface ContentContextType {
@@ -37,6 +37,14 @@ interface ContentContextType {
   ) => Promise<ServiceItem | null>;
   deleteService: (id: string) => Promise<void>;
 
+  // Testimonials
+  testimonials: TestimonialItem[];
+  updateTestimonial: (id: string, data: Partial<TestimonialItem>) => Promise<void>;
+  addTestimonial: (
+    data: Omit<TestimonialItem, "id" | "created_at" | "updated_at">
+  ) => Promise<TestimonialItem | null>;
+  deleteTestimonial: (id: string) => Promise<void>;
+
   // Image upload
   uploadImage: (file: File) => Promise<string | null>;
 
@@ -55,6 +63,10 @@ const ContentContext = createContext<ContentContextType>({
   updateService: async () => {},
   addService: async () => null,
   deleteService: async () => {},
+  testimonials: [],
+  updateTestimonial: async () => {},
+  addTestimonial: async () => null,
+  deleteTestimonial: async () => {},
   uploadImage: async () => null,
   loaded: false,
 });
@@ -70,6 +82,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     PortfolioProject[]
   >([]);
   const [services, setServices] = useState<ServiceItem[]>([]);
+  const [testimonials, setTestimonials] = useState<TestimonialItem[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [seeded, setSeeded] = useState(false);
 
@@ -82,7 +95,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       }
 
       try {
-        const [contentRes, portfolioRes, servicesRes] = await Promise.all([
+        const [contentRes, portfolioRes, servicesRes, testimonialsRes] = await Promise.all([
           supabase.from("site_content").select("*"),
           supabase
             .from("portfolio_projects")
@@ -90,6 +103,10 @@ export function ContentProvider({ children }: { children: ReactNode }) {
             .order("sort_order", { ascending: true }),
           supabase
             .from("services")
+            .select("*")
+            .order("sort_order", { ascending: true }),
+          supabase
+            .from("testimonials")
             .select("*")
             .order("sort_order", { ascending: true }),
         ]);
@@ -108,6 +125,10 @@ export function ContentProvider({ children }: { children: ReactNode }) {
 
         if (servicesRes.data && servicesRes.data.length > 0) {
           setServices(servicesRes.data);
+        }
+
+        if (testimonialsRes.data && testimonialsRes.data.length > 0) {
+          setTestimonials(testimonialsRes.data);
         }
       } catch (_err) {
         // Silently fail — defaults will be used
@@ -141,6 +162,15 @@ export function ContentProvider({ children }: { children: ReactNode }) {
             .select();
           if (data) setServices(data);
         }
+
+        // Seed testimonials if empty
+        if (testimonials.length === 0) {
+          const { data } = await supabase
+            .from("testimonials")
+            .insert(DEFAULT_TESTIMONIALS)
+            .select();
+          if (data) setTestimonials(data);
+        }
       } catch (_err) {
         // Silently fail
       }
@@ -148,7 +178,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     };
 
     seed();
-  }, [isAdmin, loaded, seeded, portfolioProjects.length, services.length]);
+  }, [isAdmin, loaded, seeded, portfolioProjects.length, services.length, testimonials.length]);
 
   // Get content value with fallback
   const get = useCallback(
@@ -245,6 +275,40 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     await supabase.from("services").delete().eq("id", id);
   }, []);
 
+  // Testimonials CRUD
+  const updateTestimonial = useCallback(
+    async (id: string, data: Partial<TestimonialItem>) => {
+      setTestimonials((prev) =>
+        prev.map((t) => (t.id === id ? { ...t, ...data } : t))
+      );
+      if (!isSupabaseConfigured()) return;
+      await supabase.from("testimonials").update(data).eq("id", id);
+    },
+    []
+  );
+
+  const addTestimonial = useCallback(
+    async (data: Omit<TestimonialItem, "id" | "created_at" | "updated_at">) => {
+      if (!isSupabaseConfigured()) return null;
+      const { data: inserted } = await supabase
+        .from("testimonials")
+        .insert(data)
+        .select()
+        .single();
+      if (inserted) {
+        setTestimonials((prev) => [...prev, inserted]);
+      }
+      return inserted;
+    },
+    []
+  );
+
+  const deleteTestimonial = useCallback(async (id: string) => {
+    setTestimonials((prev) => prev.filter((t) => t.id !== id));
+    if (!isSupabaseConfigured()) return;
+    await supabase.from("testimonials").delete().eq("id", id);
+  }, []);
+
   // Upload image to Supabase Storage
   const uploadImage = useCallback(async (file: File): Promise<string | null> => {
     if (!isSupabaseConfigured()) return null;
@@ -287,6 +351,13 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         updateService,
         addService,
         deleteService,
+        testimonials:
+          testimonials.length > 0
+            ? testimonials
+            : (DEFAULT_TESTIMONIALS as unknown as TestimonialItem[]),
+        updateTestimonial,
+        addTestimonial,
+        deleteTestimonial,
         uploadImage,
         loaded,
       }}

@@ -19,6 +19,16 @@ export interface PortfolioProject {
   updated_at: string;
 }
 
+export interface TestimonialItem {
+  id: string;
+  image_url: string;
+  client_name: string;
+  project_label: string;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface ServiceItem {
   id: string;
   number: string;

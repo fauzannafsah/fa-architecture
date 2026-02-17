@@ -49,7 +49,9 @@ export default function Portfolio() {
           </div>
           <AnimatedSection delay={0.2}>
             <a
-              href="#"
+              href="https://www.tiktok.com/@fa.architecture"
+              target="_blank"
+              rel="noopener noreferrer"
               className="group flex items-center gap-2 text-sm font-medium uppercase tracking-wider text-terracotta transition-colors hover:text-terracotta-dark"
             >
               Lihat Semua Proyek

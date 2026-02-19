@@ -217,100 +217,22 @@ export const DEFAULT_SERVICES: Omit<ServiceItem, "id" | "created_at" | "updated_
 
 // Default testimonials (placeholders)
 export const DEFAULT_TESTIMONIALS: Omit<TestimonialItem, "id" | "created_at" | "updated_at">[] = [
-  // {
-  //   image_url: "https://placehold.co/360x640/e8e0d8/C45D3E?text=Testimoni+1",
-  //   client_name: "Klien 1",
-  //   project_label: "Proyek Perumahan",
-  //   sort_order: 0,
-  // },
-  // {
-  //   image_url: "https://placehold.co/360x640/e8e0d8/C45D3E?text=Testimoni+2",
-  //   client_name: "Klien 2",
-  //   project_label: "Proyek Peternakan",
-  //   sort_order: 1,
-  // },
-  // {
-  //   image_url: "https://placehold.co/360x640/e8e0d8/C45D3E?text=Testimoni+3",
-  //   client_name: "Klien 3",
-  //   project_label: "Renovasi",
-  //   sort_order: 2,
-  // },
   {
-    image_url: "/testi1.png",
+    image_url: "https://placehold.co/360x640/e8e0d8/C45D3E?text=Testimoni+1",
     client_name: "Klien 1",
-    project_label: "Renovasi",
+    project_label: "Proyek Perumahan",
     sort_order: 0,
   },
   {
-    image_url: "/testi2.png",
+    image_url: "https://placehold.co/360x640/e8e0d8/C45D3E?text=Testimoni+2",
     client_name: "Klien 2",
-    project_label: "Renovasi",
+    project_label: "Proyek Peternakan",
     sort_order: 1,
   },
   {
-    image_url: "/testi3.png",
+    image_url: "https://placehold.co/360x640/e8e0d8/C45D3E?text=Testimoni+3",
     client_name: "Klien 3",
     project_label: "Renovasi",
     sort_order: 2,
-  },
-  {
-    image_url: "/testi4.jpeg",
-    client_name: "Klien 4",
-    project_label: "Renovasi",
-    sort_order: 3,
-  },
-  {
-    image_url: "/testi5.jpg",
-    client_name: "Klien 5",
-    project_label: "Renovasi",
-    sort_order: 4,
-  },
-  {
-    image_url: "/testi6.jpeg",
-    client_name: "Klien 6",
-    project_label: "Renovasi",
-    sort_order: 5,
-  },
-  {
-    image_url: "/testi7.jpg",
-    client_name: "Klien 7",
-    project_label: "Renovasi",
-    sort_order: 6,
-  },
-  {
-    image_url: "/testi8.jpeg",
-    client_name: "Klien 8",
-    project_label: "Renovasi",
-    sort_order: 7,
-  },
-  {
-    image_url: "/testi9.jpeg",
-    client_name: "Klien 9",
-    project_label: "Renovasi",
-    sort_order: 8,
-  },
-  {
-    image_url: "/testi10.jpeg",
-    client_name: "Klien 10",
-    project_label: "Renovasi",
-    sort_order: 9,
-  },
-  {
-    image_url: "/testi11.jpeg",
-    client_name: "Klien 11",
-    project_label: "Renovasi",
-    sort_order: 10,
-  },
-  {
-    image_url: "/testi12.jpeg",
-    client_name: "Klien 12",
-    project_label: "Renovasi",
-    sort_order: 11,
-  },
-  {
-    image_url: "/testi13.jpeg",
-    client_name: "Klien 1",
-    project_label: "Renovasi",
-    sort_order: 12,
   }
 ];
